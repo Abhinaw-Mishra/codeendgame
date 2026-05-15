@@ -36,7 +36,7 @@ const Visualizations = {
         .attr('fill', s.danger ? '#ef4444' : '#60a5fa').attr('font-size', 24).attr('font-weight', 'bold')
         .text(s.counter);
       // Arrow
-      const arrowData = [{x: cx + r, y: cy}, {x: cx + r + 30, y: cy - 20}, {x: cx + r + 30, y: cy + 20}, {x: cx + r, y: cy}];
+      const arrowData = [{ x: cx + r, y: cy }, { x: cx + r + 30, y: cy - 20 }, { x: cx + r + 30, y: cy + 20 }, { x: cx + r, y: cy }];
       svg.append('path').attr('d', `M ${cx + r} ${cy} Q ${cx + r + 50} ${cy - 40} ${cx + r + 30} ${cy + 25}`)
         .attr('fill', 'none').attr('stroke', s.running ? '#f59e0b' : '#64748b').attr('stroke-width', 2).attr('marker-end', 'url(#arrow)');
       // Condition label

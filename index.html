@@ -264,7 +264,7 @@
           <div class="panel-actions">
             <button class="icon-btn" id="run-analysis-btn" title="Run Analysis">
               <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-                <path d="M12 4v16m8-8H4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M12 4v16m8-8H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
               </svg>
               Analyze
             </button>
@@ -276,7 +276,8 @@
             </button>
             <button class="icon-btn icon-btn-ghost" id="clear-btn" title="Clear editor">
               <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
-                <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" />
               </svg>
             </button>
           </div>
@@ -293,7 +294,7 @@
 
       <!-- RIGHT: Analysis Results -->
       <div class="results-panel" id="results-panel">
-        
+
         <!-- Tabs for Output and Analysis -->
         <div class="results-tabs">
           <button class="res-tab active" id="tab-logic">🧠 Logic Analysis</button>
@@ -301,7 +302,7 @@
         </div>
 
         <div class="results-body" id="results-body">
-          
+
           <!-- LOGIC ANALYSIS PANE -->
           <div id="pane-logic" class="pane-content active">
             <div class="results-header" style="border:none; padding:0 0 16px 0; margin-bottom: 16px;">
@@ -319,18 +320,20 @@
                 </svg>
               </div>
               <p class="empty-title">Awaiting Analysis</p>
-              <p class="empty-sub">Write or paste code in the editor. Analysis runs automatically as you type, or click <strong>Analyze</strong>.</p>
+              <p class="empty-sub">Write or paste code in the editor. Analysis runs automatically as you type, or click
+                <strong>Analyze</strong>.</p>
             </div>
             <div id="error-cards-container"></div>
           </div>
 
           <!-- TERMINAL OUTPUT PANE -->
           <div id="pane-terminal" class="pane-content" style="display: none;">
-             <div class="terminal-header">
-                <h3>Execution Engine</h3>
-                <span id="terminal-status" class="term-status idle">Idle</span>
-             </div>
-             <pre id="terminal-output" class="terminal-output">Ready to execute code...\nClick 'Run Code' to compile and run.</pre>
+            <div class="terminal-header">
+              <h3>Execution Engine</h3>
+              <span id="terminal-status" class="term-status idle">Idle</span>
+            </div>
+            <pre id="terminal-output"
+              class="terminal-output">Ready to execute code...\nClick 'Run Code' to compile and run.</pre>
           </div>
 
         </div>

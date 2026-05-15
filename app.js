@@ -228,7 +228,7 @@ int main() {
 const RULES = [
   {
     id: 'infinite_loop',
-    test(code) { 
+    test(code) {
       const m = code.match(/while\s*\(?[^):\{]+[):\{]([\s\S]*)/);
       return m ? !/(\+\+|--|\+=|-=|=)/.test(m[1]) : false;
     },
@@ -268,7 +268,7 @@ const RULES = [
     conceptIcon: '📚',
     getLine(lines) {
       const m = lines.join('\n').match(/(?:def|function)\s+(\w+)\s*\(\s*(\w+)\s*\)/);
-      if(m) { for (let i = 0; i < lines.length; i++) if (new RegExp(m[1] + "\\s*\\(\\s*" + m[2] + "\\s*\\)").test(lines[i])) return i + 1; }
+      if (m) { for (let i = 0; i < lines.length; i++) if (new RegExp(m[1] + "\\s*\\(\\s*" + m[2] + "\\s*\\)").test(lines[i])) return i + 1; }
       return 1;
     },
     description: 'A recursive call passes the same argument without decrementing it. The function will never reach its base case, causing the call stack to overflow.',
@@ -327,7 +327,7 @@ const JAVA_RULES = [
     test(code) { return /return\s+null/.test(code) && /\.\w+\(/.test(code) && !/if\s*\(.*null/.test(code); },
     severity: 'critical', title: 'Potential NullPointerException',
     concept: 'Null Safety', conceptIcon: '🛡️',
-    getLine(lines) { for (let i=0;i<lines.length;i++) if (/\.\w+\(/.test(lines[i]) && !/if|null|=/.test(lines[i])) return i+1; return 1; },
+    getLine(lines) { for (let i = 0; i < lines.length; i++) if (/\.\w+\(/.test(lines[i]) && !/if|null|=/.test(lines[i])) return i + 1; return 1; },
     description: 'A method that may return null is called, and its result is immediately used without a null check. This throws NullPointerException at runtime.',
     fix: '// Always guard null returns:\nif (user != null) {\n    System.out.println(user.length());\n}'
   },
@@ -336,7 +336,7 @@ const JAVA_RULES = [
     test(code) { return /String\s+\w+\s*=\s*(?:new\s+String|"[^"]*")/.test(code) && /==/.test(code) && !/\.equals/.test(code); },
     severity: 'critical', title: 'String Reference Equality Bug',
     concept: 'Reference vs. Value Semantics', conceptIcon: '🔗',
-    getLine(lines) { for (let i=0;i<lines.length;i++) if (/==/.test(lines[i]) && !/equals|===/.test(lines[i])) return i+1; return 1; },
+    getLine(lines) { for (let i = 0; i < lines.length; i++) if (/==/.test(lines[i]) && !/equals|===/.test(lines[i])) return i + 1; return 1; },
     description: 'In Java, == on String objects compares memory addresses, not content. Two new String("x") objects are always unequal with ==.',
     fix: '// Use .equals() to compare string content:\nif (a.equals(b)) { ... }\n// or for null-safety:\nObjects.equals(a, b)'
   },
@@ -345,7 +345,7 @@ const JAVA_RULES = [
     test(code) { return /double\s+\w+\s*=\s*[\w\d]+\s*\/\s*[\w\d]+/.test(code) && /int\s+\w+\s*=/.test(code); },
     severity: 'warning', title: 'Integer Division Assigned to Double',
     concept: 'Data Types & Type Coercion', conceptIcon: '🔢',
-    getLine(lines) { for (let i=0;i<lines.length;i++) if (/double.*=.*\//.test(lines[i])) return i+1; return 1; },
+    getLine(lines) { for (let i = 0; i < lines.length; i++) if (/double.*=.*\//.test(lines[i])) return i + 1; return 1; },
     description: 'Even though the result variable is double, if both operands are int the division is computed as integer first, then widened. The decimal part is already lost.',
     fix: '// Cast one operand to double before dividing:\ndouble avg = (double) total / count;'
   },
@@ -354,19 +354,19 @@ const JAVA_RULES = [
     test(code) { return /<=\s*\w+\.length/.test(code); },
     severity: 'critical', title: 'Off-by-One — ArrayIndexOutOfBoundsException',
     concept: 'Array Indexing & Bounds', conceptIcon: '📦',
-    getLine(lines) { for (let i=0;i<lines.length;i++) if (/<=.*length/.test(lines[i])) return i+1; return 1; },
+    getLine(lines) { for (let i = 0; i < lines.length; i++) if (/<=.*length/.test(lines[i])) return i + 1; return 1; },
     description: 'Using i <= arr.length iterates one past the last valid index (length-1), causing ArrayIndexOutOfBoundsException.',
     fix: '// Use strict less-than:\nfor (int i = 0; i < arr.length; i++) { ... }'
   },
   {
     id: 'java_infinite',
-    test(code) { 
+    test(code) {
       const m = code.match(/while\s*\(?[^):\{]+[):\{]([\s\S]*)/);
       return m ? !/(\+\+|--|\+=|-=|=)/.test(m[1]) : false;
     },
     severity: 'critical', title: 'Potential Infinite Loop',
     concept: 'Loop Invariant', conceptIcon: '🔄',
-    getLine(lines) { for (let i=0;i<lines.length;i++) if (/while\s*\(/.test(lines[i])) return i+1; return 1; },
+    getLine(lines) { for (let i = 0; i < lines.length; i++) if (/while\s*\(/.test(lines[i])) return i + 1; return 1; },
     description: 'The loop counter does not appear to be incremented. The while condition will never become false, causing an infinite loop.',
     fix: '// Add increment inside loop body:\nwhile (i < 10) {\n    sum += i;\n    i++;  // ← required\n}'
   }
@@ -378,19 +378,19 @@ const C_RULES = [
     test(code) { return /(?:strcpy|gets|sprintf)\s*\(/.test(code); },
     severity: 'critical', title: 'Buffer Overflow Risk',
     concept: 'Memory Safety & Bounds Checking', conceptIcon: '💥',
-    getLine(lines) { for (let i=0;i<lines.length;i++) if (/(?:strcpy|gets|sprintf)\(/.test(lines[i])) return i+1; return 1; },
+    getLine(lines) { for (let i = 0; i < lines.length; i++) if (/(?:strcpy|gets|sprintf)\(/.test(lines[i])) return i + 1; return 1; },
     description: 'strcpy() and gets() do not check destination buffer size. Writing more bytes than allocated causes a buffer overflow — corrupting memory or enabling exploits.',
     fix: '// Use safe alternatives:\nstrncpy(buf, src, sizeof(buf) - 1);\nbuf[sizeof(buf)-1] = \"\\0\"; // ensure null terminator'
   },
   {
     id: 'c_dangling_ptr',
-    test(code) { 
+    test(code) {
       const m = code.match(/free\s*\(\s*(\w+)\s*\)/);
       return m && m[1] && new RegExp(`\\*\\s*${m[1]}`).test(code.substring(code.indexOf(m[0])));
     },
     severity: 'critical', title: 'Dangling Pointer — Use After Free',
     concept: 'Memory Management & Pointers', conceptIcon: '👻',
-    getLine(lines) { for (let i=0;i<lines.length;i++) if (/free\s*\(/.test(lines[i])) return i+1; return 1; },
+    getLine(lines) { for (let i = 0; i < lines.length; i++) if (/free\s*\(/.test(lines[i])) return i + 1; return 1; },
     description: 'After calling free(), the pointer still holds the old memory address. Dereferencing it is undefined behavior — the memory may have been reallocated to something else.',
     fix: '// Set pointer to NULL after freeing:\nfree(ptr);\nptr = NULL;  // prevents accidental dereference'
   },
@@ -399,19 +399,19 @@ const C_RULES = [
     test(code) { return /float\s+\w+\s*=\s*\w+\s*\/\s*\w+/.test(code) && /int\s+/.test(code); },
     severity: 'warning', title: 'Integer Division Assigned to Float',
     concept: 'Data Types & Type Coercion', conceptIcon: '🔢',
-    getLine(lines) { for (let i=0;i<lines.length;i++) if (/float.*=.*\//.test(lines[i])) return i+1; return 1; },
+    getLine(lines) { for (let i = 0; i < lines.length; i++) if (/float.*=.*\//.test(lines[i])) return i + 1; return 1; },
     description: 'When dividing two int values, C performs integer division first and truncates the decimal. The result is then widened to float — but precision is already lost.',
     fix: '// Cast at least one operand to float:\nfloat result = (float)a / b;'
   },
   {
     id: 'c_infinite',
-    test(code) { 
+    test(code) {
       const m = code.match(/while\s*\(?[^):\{]+[):\{]([\s\S]*)/);
       return m ? !/(\+\+|--|\+=|-=|=)/.test(m[1]) : false;
     },
     severity: 'critical', title: 'Potential Infinite Loop',
     concept: 'Loop Invariant', conceptIcon: '🔄',
-    getLine(lines) { for (let i=0;i<lines.length;i++) if (/while\s*\(/.test(lines[i])) return i+1; return 1; },
+    getLine(lines) { for (let i = 0; i < lines.length; i++) if (/while\s*\(/.test(lines[i])) return i + 1; return 1; },
     description: 'The loop variable is never modified inside the loop body. The termination condition will never become false.',
     fix: '// Increment inside loop:\nwhile (i < 10) {\n    sum += i;\n    i++;  // ← add this\n}'
   },
@@ -420,7 +420,7 @@ const C_RULES = [
     test(code) { return /<=\s*\w+/.test(code) && /\[\w+\]/.test(code) && /for\s*\(/.test(code); },
     severity: 'critical', title: 'Off-by-One Array Access',
     concept: 'Array Indexing & Bounds', conceptIcon: '📦',
-    getLine(lines) { for (let i=0;i<lines.length;i++) if (/<=\s*\d+/.test(lines[i]) && /for/.test(lines[i])) return i+1; return 1; },
+    getLine(lines) { for (let i = 0; i < lines.length; i++) if (/<=\s*\d+/.test(lines[i]) && /for/.test(lines[i])) return i + 1; return 1; },
     description: 'Accessing an array with index equal to its declared size is out of bounds. C arrays are 0-indexed; a 5-element array has valid indices 0–4 only.',
     fix: '// Use strict less-than:\nfor (int i = 0; i < 5; i++) { ... }'
   }
@@ -532,7 +532,7 @@ async function runAnalysis() {
     cpp: 'gcc-12.3.0',
     java: 'openjdk-jdk-21+35'
   };
-  
+
   try {
     const res = await fetch('https://wandbox.org/api/compile.json', {
       method: 'POST',
@@ -550,15 +550,15 @@ async function runAnalysis() {
     // Check for compile errors (C, C++, Java)
     if (data.compiler_error) {
       syntaxErrorMsg = data.compiler_error;
-    } 
+    }
     // Check for runtime syntax errors (Python, JS)
-    else if (data.status !== '0' && data.program_error && 
-              (data.program_error.includes('SyntaxError') || 
-               data.program_error.includes('ReferenceError') || 
-               data.program_error.includes('NameError') ||
-               data.program_error.includes('error:') ||
-               data.program_error.includes('Exception') ||
-               data.program_error.includes('Traceback'))) {
+    else if (data.status !== '0' && data.program_error &&
+      (data.program_error.includes('SyntaxError') ||
+        data.program_error.includes('ReferenceError') ||
+        data.program_error.includes('NameError') ||
+        data.program_error.includes('error:') ||
+        data.program_error.includes('Exception') ||
+        data.program_error.includes('Traceback'))) {
       syntaxErrorMsg = data.program_error;
     }
 
@@ -583,12 +583,12 @@ async function runAnalysis() {
         description: 'The compiler caught a syntax or runtime error in your code:\n' + shortDesc,
         fix: 'Fix the syntax error to continue logic analysis.\nClick "Run Code" to view the full compiler details.'
       });
-      
+
       renderErrors(currentErrors);
       updateDecorations(currentErrors);
       setStatus('error');
     }
-  } catch(e) {
+  } catch (e) {
     console.error("Background syntax check failed:", e);
   }
 }
@@ -758,18 +758,18 @@ document.getElementById('tab-terminal').onclick = () => {
 document.getElementById('run-code-btn').onclick = async () => {
   if (!editor) return;
   const code = editor.getValue();
-  
+
   // Switch to terminal tab
   document.getElementById('tab-terminal').click();
-  
+
   const statusEl = document.getElementById('terminal-status');
   const outEl = document.getElementById('terminal-output');
-  
+
   statusEl.className = 'term-status running';
   statusEl.textContent = 'Running...';
   outEl.textContent = 'Sending code to execution engine...\n';
   outEl.style.color = '#a7f3d0';
-  
+
   const wandboxCompilers = {
     python: 'cpython-3.10.15',
     javascript: 'nodejs-18.20.4',
@@ -777,13 +777,13 @@ document.getElementById('run-code-btn').onclick = async () => {
     cpp: 'gcc-12.3.0',
     java: 'openjdk-jdk-21+35'
   };
-  
+
   const payload = {
     compiler: wandboxCompilers[currentLang],
     code: code,
     save: false
   };
-  
+
   try {
     const res = await fetch('https://wandbox.org/api/compile.json', {
       method: 'POST',
@@ -791,7 +791,7 @@ document.getElementById('run-code-btn').onclick = async () => {
       body: JSON.stringify(payload)
     });
     const data = await res.json();
-    
+
     if (data.compiler_error) {
       statusEl.className = 'term-status error';
       statusEl.textContent = 'Compile Error';
