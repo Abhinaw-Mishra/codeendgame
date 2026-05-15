@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LogicLens — CS Logic Error Analyzer</title>
+  <meta name="description"
+    content="Real-time CS logic error analyzer that detects conceptual flaws and maps them to core computer science concepts with interactive visualizations." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <!-- Monaco Editor -->
+  <link rel="stylesheet" data-name="vs/editor/editor.main"
+    href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/editor/editor.main.min.css" />
+  <!-- D3.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+</head>
+
+<body>
+
+  <!-- ─── PARTICLES BACKGROUND ─────────────────────────────────────── -->
+  <div id="particles-bg" aria-hidden="true"></div>
+
+  <!-- ─── NAVBAR ───────────────────────────────────────────────────── -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">
+        <span class="logo-icon">⟨/⟩</span>
+        <span class="logo-text">Logic<span class="logo-accent">Lens</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="#analyzer" class="nav-link">Analyzer</a>
+        <a href="#concepts" class="nav-link">CS Concepts</a>
+        <a href="#how-it-works" class="nav-link">How It Works</a>
+      </div>
+      <a href="#analyzer" class="btn-primary nav-cta" id="nav-cta-btn">
+        <span>Launch Analyzer</span>
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+          <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+      </a>
+    </div>
+  </nav>
+
+  <!-- ─── HERO ─────────────────────────────────────────────────────── -->
+  <section class="hero" id="hero">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      <span>Real-time Analysis · CS Concept Mapping · Interactive Visualizations</span>
+    </div>
+    <h1 class="hero-title">
+      Debug Smarter.<br />
+      <span class="gradient-text">Understand Deeper.</span>
+    </h1>
+    <p class="hero-subtitle">
+      LogicLens detects logic &amp; conceptual errors in your code as you write — not just syntax.
+      It maps every bug to the underlying CS concept and explains it through
+      interactive visualizations.
+    </p>
+    <div class="hero-actions">
+      <a href="#analyzer" class="btn-primary btn-large" id="hero-launch-btn">
+        <span>Start Analyzing</span>
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+          <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+      </a>
+      <a href="#how-it-works" class="btn-ghost btn-large" id="hero-learn-btn">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
+          <path d="M12 8v4l3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+        <span>See How It Works</span>
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num">12+</span>
+        <span class="stat-label">Error Patterns</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-num">8</span>
+        <span class="stat-label">CS Concepts Mapped</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-num">3</span>
+        <span class="stat-label">Languages Supported</span>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="editor-preview-card">
+        <div class="preview-header">
+          <span class="preview-dot red"></span>
+          <span class="preview-dot yellow"></span>
+          <span class="preview-dot green"></span>
+          <span class="preview-title">student_solution.py</span>
+        </div>
+        <div class="preview-code">
+          <div class="code-line"><span class="ln">1</span><span class="kw">def</span> <span
+              class="fn">factorial</span>(n):</div>
+          <div class="code-line"><span class="ln">2</span> <span class="kw">if</span> n <span class="op">==</span> <span
+              class="num">0</span>:</div>
+          <div class="code-line"><span class="ln">3</span> <span class="kw">return</span> <span class="num">1</span>
+          </div>
+          <div class="code-line error-line"><span class="ln">4</span> <span class="kw">return</span> n <span
+              class="op">*</span> <span class="fn">factorial</span>(n)</div>
+          <div class="error-marker">⚠ Missing base case decrement — infinite recursion!</div>
+          <div class="code-line"><span class="ln">5</span></div>
+          <div class="code-line"><span class="ln">6</span><span class="fn">print</span>(factorial(<span
+              class="num">5</span>))</div>
+        </div>
+        <div class="preview-badge error-badge">
+          <span class="badge-icon">⚡</span>
+          <span>Recursion Error Detected → CS Concept: Recursive Invariant</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── HOW IT WORKS ─────────────────────────────────────────────── -->
+  <section class="section" id="how-it-works">
+    <div class="section-header">
+      <span class="section-tag">The Process</span>
+      <h2 class="section-title">How LogicLens Works</h2>
+      <p class="section-sub">From raw code to deep understanding — in milliseconds.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card" id="step-write">
+        <div class="step-icon-wrap" style="--icon-color: #6366f1;">
+          <svg width="28" height="28" fill="none" viewBox="0 0 24 24">
+            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <div class="step-num">01</div>
+        <h3>Write Your Code</h3>
+        <p>Type or paste any Python, JavaScript, or C++ code into the Monaco editor — just like any modern IDE.</p>
+      </div>
+      <div class="step-connector" aria-hidden="true">
+        <svg width="40" height="16" fill="none" viewBox="0 0 40 16">
+          <path d="M0 8h36M30 2l6 6-6 6" stroke="var(--accent-blue)" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </div>
+      <div class="step-card" id="step-analyze">
+        <div class="step-icon-wrap" style="--icon-color: #8b5cf6;">
+          <svg width="28" height="28" fill="none" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
+            <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </div>
+        <div class="step-num">02</div>
+        <h3>Real-time Analysis</h3>
+        <p>The logic engine scans for common conceptual flaws — infinite loops, off-by-one errors, missing base cases,
+          and more.</p>
+      </div>
+      <div class="step-connector" aria-hidden="true">
+        <svg width="40" height="16" fill="none" viewBox="0 0 40 16">
+          <path d="M0 8h36M30 2l6 6-6 6" stroke="var(--accent-blue)" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </div>
+      <div class="step-card" id="step-map">
+        <div class="step-icon-wrap" style="--icon-color: #06b6d4;">
+          <svg width="28" height="28" fill="none" viewBox="0 0 24 24">
+            <path
+              d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 9m0 8V9m0 0L9 7"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <div class="step-num">03</div>
+        <h3>CS Concept Mapping</h3>
+        <p>Every error is tied to the exact CS principle behind it — with a plain-English explanation bridging the gap.
+        </p>
+      </div>
+      <div class="step-connector" aria-hidden="true">
+        <svg width="40" height="16" fill="none" viewBox="0 0 40 16">
+          <path d="M0 8h36M30 2l6 6-6 6" stroke="var(--accent-blue)" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </div>
+      <div class="step-card" id="step-visualize">
+        <div class="step-icon-wrap" style="--icon-color: #10b981;">
+          <svg width="28" height="28" fill="none" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
+            <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
+            <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
+            <path d="M17.5 14v7m-3.5-3.5h7" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </div>
+        <div class="step-num">04</div>
+        <h3>Interactive Visualizations</h3>
+        <p>See execution flow, call stacks, and variable state changes rendered in real-time D3 animations.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── MAIN ANALYZER ─────────────────────────────────────────────── -->
+  <section class="analyzer-section" id="analyzer">
+    <div class="analyzer-header">
+      <div>
+        <span class="section-tag">Live Tool</span>
+        <h2 class="section-title" style="margin-top: 8px;">Code Analyzer</h2>
+      </div>
+      <div class="analyzer-controls">
+        <div class="lang-selector" id="lang-selector">
+          <button class="lang-btn active" data-lang="python" id="lang-python-btn">Python</button>
+          <button class="lang-btn" data-lang="javascript" id="lang-js-btn">JavaScript</button>
+          <button class="lang-btn" data-lang="cpp" id="lang-cpp-btn">C++</button>
+          <button class="lang-btn" data-lang="c" id="lang-c-btn">C</button>
+          <button class="lang-btn" data-lang="java" id="lang-java-btn">Java</button>
+        </div>
+        <div class="snippet-select-wrap">
+          <label class="snippet-label" for="snippet-select">Load Example:</label>
+          <select id="snippet-select" class="snippet-select">
+            <option value="">— Choose snippet —</option>
+            <optgroup label="🐍 Python">
+              <option value="infinite_loop">Infinite Loop</option>
+              <option value="off_by_one">Off-by-One Error</option>
+              <option value="no_base_case">Missing Base Case</option>
+              <option value="list_mutation">List Mutation While Iterating</option>
+              <option value="integer_division">Integer Division Loss</option>
+              <option value="null_check">Missing Null Check</option>
+              <option value="correct_code">✅ Correct Code (Binary Search)</option>
+            </optgroup>
+            <optgroup label="☕ Java">
+              <option value="java_null">Java: NullPointerException</option>
+              <option value="java_ref_eq">Java: String == vs .equals()</option>
+              <option value="java_int_div">Java: Integer Division</option>
+              <option value="java_infinite">Java: Infinite Loop</option>
+              <option value="java_off_by_one">Java: Off-by-One (Array)</option>
+            </optgroup>
+            <optgroup label="🔵 C">
+              <option value="c_buffer_overflow">C: Buffer Overflow</option>
+              <option value="c_dangling_ptr">C: Dangling Pointer</option>
+              <option value="c_infinite">C: Infinite Loop</option>
+              <option value="c_int_div">C: Integer Division</option>
+              <option value="c_off_by_one">C: Off-by-One</option>
+            </optgroup>
+            <optgroup label="🟡 JavaScript">
+              <option value="reference_equality">JS: Reference Equality</option>
+            </optgroup>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="analyzer-workspace">
+      <!-- LEFT: Editor -->
+      <div class="editor-panel">
+        <div class="panel-header">
+          <div class="panel-dots">
+            <span class="pdot red"></span>
+            <span class="pdot yellow"></span>
+            <span class="pdot green"></span>
+          </div>
+          <span class="panel-title" id="editor-filename">student_code.py</span>
+          <div class="panel-actions">
+            <button class="icon-btn" id="run-analysis-btn" title="Run Analysis">
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                <path d="M12 4v16m8-8H4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              Analyze
+            </button>
+            <button class="icon-btn run-code-btn" id="run-code-btn" title="Compile & Run Code">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                <polygon points="5,3 19,12 5,21" />
+              </svg>
+              Run Code
+            </button>
+            <button class="icon-btn icon-btn-ghost" id="clear-btn" title="Clear editor">
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+                <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div id="monaco-editor-container"></div>
+        <div class="editor-footer">
+          <span class="status-indicator" id="status-indicator">
+            <span class="status-dot idle"></span>
+            <span id="status-text">Ready — start typing to analyze</span>
+          </span>
+          <span class="line-count" id="line-count">Ln 1, Col 1</span>
+        </div>
+      </div>
+
+      <!-- RIGHT: Analysis Results -->
+      <div class="results-panel" id="results-panel">
+        
+        <!-- Tabs for Output and Analysis -->
+        <div class="results-tabs">
+          <button class="res-tab active" id="tab-logic">🧠 Logic Analysis</button>
+          <button class="res-tab" id="tab-terminal">💻 Terminal Output</button>
+        </div>
+
+        <div class="results-body" id="results-body">
+          
+          <!-- LOGIC ANALYSIS PANE -->
+          <div id="pane-logic" class="pane-content active">
+            <div class="results-header" style="border:none; padding:0 0 16px 0; margin-bottom: 16px;">
+              <h3 style="font-size: 1.1rem; color: #f1f5f9; font-weight:600;">Analysis Results</h3>
+              <div class="results-summary" id="results-summary">
+                <span class="summary-badge" id="error-count-badge">0 Issues</span>
+              </div>
+            </div>
+            <div class="empty-state" id="empty-state">
+              <div class="empty-icon">
+                <svg width="56" height="56" fill="none" viewBox="0 0 24 24">
+                  <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.5" />
+                  <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                  <path d="M11 8v3m0 3h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
+              </div>
+              <p class="empty-title">Awaiting Analysis</p>
+              <p class="empty-sub">Write or paste code in the editor. Analysis runs automatically as you type, or click <strong>Analyze</strong>.</p>
+            </div>
+            <div id="error-cards-container"></div>
+          </div>
+
+          <!-- TERMINAL OUTPUT PANE -->
+          <div id="pane-terminal" class="pane-content" style="display: none;">
+             <div class="terminal-header">
+                <h3>Execution Engine</h3>
+                <span id="terminal-status" class="term-status idle">Idle</span>
+             </div>
+             <pre id="terminal-output" class="terminal-output">Ready to execute code...\nClick 'Run Code' to compile and run.</pre>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CS CONCEPTS LIBRARY ──────────────────────────────────────── -->
+  <section class="section concepts-section" id="concepts">
+    <div class="section-header">
+      <span class="section-tag">Knowledge Base</span>
+      <h2 class="section-title">CS Concepts Covered</h2>
+      <p class="section-sub">LogicLens maps every detected error to one of these foundational computer science concepts.
+      </p>
+    </div>
+    <div class="concepts-grid" id="concepts-grid">
+      <!-- Populated by JS -->
+    </div>
+  </section>
+
+  <!-- ─── VISUALIZATION MODAL ──────────────────────────────────────── -->
+  <div class="modal-overlay" id="viz-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h3 id="modal-title">Visualization</h3>
+          <p id="modal-subtitle" class="modal-subtitle"></p>
+        </div>
+        <button class="modal-close" id="modal-close-btn" aria-label="Close visualization">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
+            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="viz-container"></div>
+        <div class="viz-explanation" id="viz-explanation"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" id="modal-prev-btn">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+            <path d="M19 12H5M12 5l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+          Prev Step
+        </button>
+        <span id="viz-step-indicator" class="step-indicator">Step 1 of 4</span>
+        <button class="btn-primary" id="modal-next-btn">
+          Next Step
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+            <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── FOOTER ───────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="logo-icon">⟨/⟩</span>
+        <span class="logo-text">Logic<span class="logo-accent">Lens</span></span>
+      </div>
+      <p class="footer-tagline">Making CS education smarter, one logic error at a time.</p>
+      <p class="footer-note">Built for CS students · Runs on Chrome, LeetCode, HackerRank</p>
+    </div>
+  </footer>
+
+  <!-- Monaco Editor Loader -->
+  <script>
+    var require = { paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' } };
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+  <script src="visualizations.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>
