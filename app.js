@@ -524,23 +524,23 @@ async function runAnalysis() {
   updateDecorations(currentErrors);
   setStatus(currentErrors.length > 0 ? 'error' : 'done');
 
-  // BACKGROUND SYNTAX & COMPILATION CHECK
-  const pistonLangs = {
-    python: { language: 'python', version: '3.10.0' },
-    javascript: { language: 'javascript', version: '18.15.0' },
-    c: { language: 'c', version: '10.2.0' },
-    cpp: { language: 'c++', version: '10.2.0' },
-    java: { language: 'java', version: '15.0.2' }
+  // BACKGROUND SYNTAX & COMPILATION CHECK (Wandbox API)
+  const wandboxCompilers = {
+    python: 'cpython-3.10.15',
+    javascript: 'nodejs-18.20.4',
+    c: 'gcc-12.3.0-c',
+    cpp: 'gcc-12.3.0',
+    java: 'openjdk-jdk-21+35'
   };
   
   try {
-    const res = await fetch('https://emkc.org/api/v2/piston/execute', {
+    const res = await fetch('https://wandbox.org/api/compile.json', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        language: pistonLangs[currentLang].language,
-        version: pistonLangs[currentLang].version,
-        files: [{ content: code }]
+        compiler: wandboxCompilers[currentLang],
+        code: code,
+        save: false
       })
     });
     const data = await res.json();
@@ -548,18 +548,18 @@ async function runAnalysis() {
     let syntaxErrorLine = 1;
 
     // Check for compile errors (C, C++, Java)
-    if (data.compile && data.compile.code !== 0) {
-      syntaxErrorMsg = data.compile.stderr || data.compile.output;
+    if (data.compiler_error) {
+      syntaxErrorMsg = data.compiler_error;
     } 
     // Check for runtime syntax errors (Python, JS)
-    else if (data.run && data.run.code !== 0 && 
-              (data.run.stderr.includes('SyntaxError') || 
-               data.run.stderr.includes('ReferenceError') || 
-               data.run.stderr.includes('NameError') ||
-               data.run.stderr.includes('error:') ||
-               data.run.stderr.includes('Exception') ||
-               data.run.stderr.includes('Traceback'))) {
-      syntaxErrorMsg = data.run.stderr;
+    else if (data.status !== '0' && data.program_error && 
+              (data.program_error.includes('SyntaxError') || 
+               data.program_error.includes('ReferenceError') || 
+               data.program_error.includes('NameError') ||
+               data.program_error.includes('error:') ||
+               data.program_error.includes('Exception') ||
+               data.program_error.includes('Traceback'))) {
+      syntaxErrorMsg = data.program_error;
     }
 
     if (syntaxErrorMsg) {
@@ -770,42 +770,42 @@ document.getElementById('run-code-btn').onclick = async () => {
   outEl.textContent = 'Sending code to execution engine...\n';
   outEl.style.color = '#a7f3d0';
   
-  const pistonLangs = {
-    python: { language: 'python', version: '3.10.0' },
-    javascript: { language: 'javascript', version: '18.15.0' },
-    c: { language: 'c', version: '10.2.0' },
-    cpp: { language: 'c++', version: '10.2.0' },
-    java: { language: 'java', version: '15.0.2' }
+  const wandboxCompilers = {
+    python: 'cpython-3.10.15',
+    javascript: 'nodejs-18.20.4',
+    c: 'gcc-12.3.0-c',
+    cpp: 'gcc-12.3.0',
+    java: 'openjdk-jdk-21+35'
   };
   
   const payload = {
-    language: pistonLangs[currentLang].language,
-    version: pistonLangs[currentLang].version,
-    files: [{ content: code }]
+    compiler: wandboxCompilers[currentLang],
+    code: code,
+    save: false
   };
   
   try {
-    const res = await fetch('https://emkc.org/api/v2/piston/execute', {
+    const res = await fetch('https://wandbox.org/api/compile.json', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
     const data = await res.json();
     
-    if (data.compile && data.compile.code !== 0) {
+    if (data.compiler_error) {
       statusEl.className = 'term-status error';
       statusEl.textContent = 'Compile Error';
-      outEl.textContent = data.compile.stderr || data.compile.output;
+      outEl.textContent = data.compiler_error;
       outEl.style.color = '#fca5a5';
-    } else if (data.run && data.run.code !== 0) {
+    } else if (data.status !== '0' && data.program_error) {
       statusEl.className = 'term-status error';
       statusEl.textContent = 'Runtime Error';
-      outEl.textContent = data.run.stderr || data.run.output;
+      outEl.textContent = data.program_error;
       outEl.style.color = '#fca5a5';
     } else {
       statusEl.className = 'term-status success';
       statusEl.textContent = 'Success';
-      outEl.textContent = data.run.output || 'Code executed successfully with no output.';
+      outEl.textContent = data.program_output || data.program_message || 'Code executed successfully with no output.';
       outEl.style.color = '#a7f3d0';
     }
   } catch (err) {
